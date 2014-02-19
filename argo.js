@@ -189,7 +189,7 @@ Argo.prototype.buildCore = function() {
             var address = env.request.connection.address();
             host = address.address;
             if (address.port) {
-              if (!(protocol === 'https' && address.port === 443) && 
+              if (!(protocol === 'https' && address.port === 443) &&
                   !(protocol === 'http' && address.port === 80)) {
                 host += ':' + address.port
               }
@@ -217,7 +217,7 @@ Argo.prototype.build = function() {
       if (env.response.body !== null && env.response.body !== undefined) {
         var body = env.response.body;
         if (typeof body === 'string') {
-          env.response.setHeader('Content-Length', body ? body.length : 0); 
+          env.response.setHeader('Content-Length', body ? body.length : 0);
           env.response.writeHead(env.response.statusCode, env.response.headers);
           env.response.end(body);
         } else if (body instanceof Stream) {
@@ -231,7 +231,7 @@ Argo.prototype.build = function() {
           if (!env.response.getHeader('Content-Type')) {
             env.response.setHeader('Content-Type', 'application/json; charset=UTF-8');
           }
-          env.response.setHeader('Content-Length', body ? body.length : 0); 
+          env.response.setHeader('Content-Length', body ? body.length : 0);
           env.response.writeHead(env.response.statusCode, env.response.headers);
           env.response.end(body.toString('utf-8'));
         }
@@ -242,12 +242,12 @@ Argo.prototype.build = function() {
           env.response.end();
         } else if (env.target.response !== null && env.target.response !== undefined) {
           env.target.response.getBody(function(err, body) {
-            env.response.setHeader('Content-Length', body ? body.length : 0); 
+            env.response.setHeader('Content-Length', body ? body.length : 0);
             env.response.writeHead(env.response.statusCode, env.response.headers);
             env.response.end(body);
           });
         } else {
-          env.response.setHeader('Content-Length', '0'); 
+          env.response.setHeader('Content-Length', '0');
           env.response.writeHead(env.response.statusCode, env.response.headers);
           env.response.end();
         }
@@ -290,7 +290,7 @@ Argo.prototype._routeMap = function(path, options, handleFn, actsAsPrefix) {
   this.router.add(path, opts, handleFn);
 
   var self = this;
-  this.builder.use(function addRouteHandleFn(handleFn) { 
+  this.builder.use(function addRouteHandleFn(handleFn) {
    self._route(self.router, handleFn);
   });
 
@@ -337,7 +337,7 @@ Argo.prototype.map = function(path, options, handler) {
     return function(handler) {
       handler('request', function mapHandler(env, next) {
         env.argo.frames = env.argo.frames || [];
-        
+
         var frame = new Frame();
         frame.routed = env.argo._routed;
         frame.routedResponseHandler = env.argo._routedResponseHandler;
@@ -357,7 +357,7 @@ Argo.prototype.map = function(path, options, handler) {
         env.argo.currentUrl = that.router.truncate(env.argo.currentUrl, frame.routeUri) || '/';
 
         // TODO: See if this can work in a response handler here.
-        
+
         if (env.argo.oncomplete) {
           frame.oncomplete = env.argo.oncomplete;
         }
@@ -424,7 +424,12 @@ Argo.prototype._routeRequestHandler = function(router) {
       env.route = env.route || {};
 
       if (routeResult.params) {
-        env.route.params = routeResult.params;
+        if (!env.route.params) {
+          env.route.params = {};
+        }
+        for (param in routeResult.params) {
+          env.route.params[param] = routeResult.params[param];
+        }
       }
 
       var fn = routeResult.handlerFn;
