@@ -427,7 +427,7 @@ Argo.prototype._routeRequestHandler = function(router) {
         if (!env.route.params) {
           env.route.params = {};
         }
-        for (param in routeResult.params) {
+        for (var param in routeResult.params) {
           env.route.params[param] = routeResult.params[param];
         }
       }
@@ -558,7 +558,6 @@ Argo.prototype._target = function(env, next) {
       env.response.statusCode = res.statusCode;
 
       env.target.response = res;
-
 
       if (next) {
         next(env);
